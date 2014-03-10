@@ -8,6 +8,15 @@ var tokenizer = new natural.WordTokenizer(),
       mongodb = null;
 
 
+/**
+ * Moves the player's coordinates to another room, and then passes that off to 
+ * the function that actually gets the room.
+ *
+ * @since 0.0.1
+ * @param {command} command - The command object.
+ * @param {string} direction - A string representation of the direction we're 
+ *  moving in.
+ */
 function movePlayer(command, direction) {
 	var move = [];
 	// right now we only process cardinal directions
@@ -39,7 +48,16 @@ function movePlayer(command, direction) {
 	});
 }
 
-function updatePlayerItems(player) {
+
+/**
+ * Updates the player's item collection in the database
+ *
+ * @since 0.0.1
+ * @param {player} player - The player object to be updated.
+ * @param {updatePlayerCallback} next - The optional callback to be executed 
+ *  after the update.
+ */
+function updatePlayerItems(player, next) {
 	var playerCollection = mongodb.collection('player');
 	playerCollection.update({_id: player._id},
 			{$set: {items: player.items}}, {w:1},
@@ -50,10 +68,25 @@ function updatePlayerItems(player) {
 		if (!success) {
 			console.error("Couldn't save player: " + player.username);
 			console.error(player);
-
+		}
+		if (typeof next !== 'undefined' && next) next(success);
 	});
 }
 
+/**
+ * This callback runs after the player is updated.
+ *
+ * @callback updatePlayerCallback
+ * @param {number} playerUpdated
+ */
+
+
+/**
+ * Process a command that was received from the player.
+ *
+ * @since 0.0.1
+ * @param {command} command - The command object
+ */
 function processCommand(command) {
 	command.command = tokenizer.tokenize(command.command.toLowerCase());
 
@@ -119,6 +152,15 @@ function processCommand(command) {
 	}
 }
 
+/**
+ * Gets the room a player is in, and inserts that room into the command object. 
+ * Responds to the player if they just entered the room.
+ *
+ * @since 0.0.1
+ * @param {command} command - The command object.
+ * @param {boolean} enterRoom - If the player has just entered the room, we need
+ *  to play them an entrance message.
+ */
 function getCurrentLocation(command, enterRoom) {
 	var roomCollection = mongodb.collection('room');
 	roomCollection.findOne({x: command.player.x, y: command.player.y, map: command.player.map}, function (err, room) {
@@ -152,6 +194,13 @@ function getCurrentLocation(command, enterRoom) {
 	});
 }
 
+/**
+ * Get the user that is addressed in the command, and inserts that information 
+ * into the command.
+ *
+ * @since 0.0.1
+ * @param {command} command - The command object.
+ */
 function getUserInCommand(command) {
 	var playerCollection = mongodb.collection('player');
 	playerCollection.findOne({username: command.player, map: "default"}, function(err, player) {
@@ -179,6 +228,13 @@ function getUserInCommand(command) {
 	});
 }
 
+/**
+ * Processes text that has come in via the REPL, for testing. Generates a 
+ * {command} object.
+ *
+ * @since 0.0.1
+ * @param {string} commandText - The raw text command that was received.
+ */
 function processReadline(commandText) {
 	var command = {
 		command: commandText,
@@ -191,6 +247,12 @@ function processReadline(commandText) {
 	getUserInCommand(command);
 }
 
+/**
+ * Listens for commands on the interface provided.
+ *
+ * @since 0.0.1
+ * @param {interface} interface - The interface object that should be watched.
+ */
 function listenForCommand(interface) {
 	// if it's readline, we'll never see more than one player, so make the name 
 	// of that user globally known
@@ -202,6 +264,7 @@ function listenForCommand(interface) {
 	}
 }
 
+// now connect to mongo
 mongo.connect('mongodb://advtxt-test:ImpossibleYellowUmbrage52751@troup.mongohq.com:10082/advtxt-test', function(err, db) {
 	if (err) throw err;
 
