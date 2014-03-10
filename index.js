@@ -29,17 +29,33 @@ function movePlayer(command, direction) {
 	var playerCollection = mongodb.collection('player');
 	playerCollection.update({_id: command.player._id},
 			{$set: {x: command.player.x, y: command.player.y}}, {w:1},
-			function(err, player) {
+			function(err, success) {
 		if (err) throw err;
 
-		if (player) {
+		// if we were successful, lets update their location and send a response
+		if (success) {
 			getCurrentLocation(command, true);
 		}
 	});
 }
 
+function updatePlayerItems(player) {
+	var playerCollection = mongodb.collection('player');
+	playerCollection.update({_id: player._id},
+			{$set: {items: player.items}}, {w:1},
+			function(err, success) {
+		if (err) throw err;
+
+		// the player is saved, do nothing unless there's an error
+		if (!success) {
+			console.error("Couldn't save player: " + player.username);
+			console.error(player);
+
+	});
+}
+
 function processCommand(command) {
-	command.command = tokenizer.tokenize(command.command);
+	command.command = tokenizer.tokenize(command.command.toLowerCase());
 
 	// make things less verbose
 	var verb = command.command[0];
@@ -49,6 +65,16 @@ function processCommand(command) {
 
 	if (verb === 'get') {
 		// would try to get an item
+		if (typeof room.items[obj] !== 'undefined') {
+			var available = room.items[obj].available(player);
+			if (available === true) {
+				// that item was available. get the item
+				player.items[obj] = room.items[obj].name;
+				command.reply(room.items[obj].get(player));
+				// update the player
+				updatePlayerItems(player);
+			}
+		}
 	}
 	else if (verb === 'go') {
 		// would try to move in a direction
@@ -57,7 +83,7 @@ function processCommand(command) {
 			if (available === true) {
 				// that direction was available, play the "go" message, then move them
 				command.reply(room.exits[obj].go(player));
-				// TODO move player
+				// move the player
 				movePlayer(command, obj);
 			}
 			else {
@@ -74,8 +100,22 @@ function processCommand(command) {
 	else if (typeof room.commands[verb] !== 'undefined') {
 		command.reply(room.commands[verb](player));
 	}
+	// if they asked for the exits, list them
+	else if (verb === 'exits') {
+		var exits = [];
+		for (var key in room.exits) {
+			exits.push(room.exits[key].name);
+		}
+
+		var exitNames = "Available exits: ";
+		for (var i = 0; i < exits.length; i++) {
+			exitNames += exits[i];
+			if (i !== exits.length - 1) exitNames += ", ";
+		}
+		command.reply(exitNames);
+	}
 	else {
-		command.reply("I didn't understand you at all.");
+		command.reply('Sorry, I don\'t know how to "' + verb + '" in this room.');
 	}
 }
 
