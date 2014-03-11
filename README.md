@@ -3,6 +3,30 @@ AdvTxt
 
 A text adventure engine that uses MongoDB as its backing store.
 
+Usage
+-----
+
+AdvTxt is not published to `npm` yet, and won't be until it's more complete. To use AdvTxt, clone it locally and:
+
+```
+var yourMongoConnectionUrl = 'mongodb://localhost/advtxt';
+var advtxt = new (require('advtxt'))(yourMongoConnectionUrl);
+```
+
+There's only one public function you should use, `advtxt.processCommand(command)` where `command` is in the following format:
+
+```
+var command = {
+    command: "Your command text",
+    player: "playerName",
+    reply: function(message) {
+        console.log(message);
+    }
+};
+```
+
+AdvTxt doesn't do any authentication on it's own, that's for you to implement in your interface. All output is sent through the `reply` function you provide.
+
 
 The MIT License (MIT)
 ---------------------
