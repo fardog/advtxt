@@ -41,7 +41,6 @@ var tokenizer = new natural.WordTokenizer(),
  globalPlayer = null,
       mongodb = null;
 
-
 /**
  * Moves the player's coordinates to another room, and then passes that off to 
  * the function that actually gets the room.
@@ -54,13 +53,13 @@ var tokenizer = new natural.WordTokenizer(),
 function movePlayer(command, direction) {
 	var move = [];
 	// right now we only process cardinal directions
-	if (direction === 'north' || direction === 'n') 
+	if (direction === i18n.__('north') || direction === 'n') 
 		move = [0, -1];
-	else if (direction === 'south' || direction === 's') 
+	else if (direction === i18n.__('south') || direction === 's') 
 		move = [0, 1];
-	else if (direction === 'east' || direction === 'e') 
+	else if (direction === i18n.__('east') || direction === 'e') 
 		move = [1, 0];
-	else if (direction === 'west' || direction === 'w')
+	else if (direction === i18n.__('west') || direction === 'w')
 		move = [-1, 0];
 	else
 		move = [0, 0];
@@ -131,7 +130,7 @@ function processCommand(command) {
 	var player = command.player;
 	var room = player.room;
 
-	if (verb === 'get') {
+	if (verb === i18n.__('get')) {
 		// would try to get an item
 		if (typeof room.items[obj] !== 'undefined') {
 			var available = room.items[obj].available(player);
@@ -149,10 +148,10 @@ function processCommand(command) {
 		}
 		// there wasn't an item by that name
 		else {
-			command.reply('You can\'t find a "' + obj + '" in this room!');
+			command.reply(i18n.__('You can\'t find a "%s" in this room!', obj));
 		}
 	}
-	else if (verb === 'go') {
+	else if (verb === i18n.__('go')) {
 		// would try to move in a direction
 		if (typeof room.exits[obj] !== 'undefined') {
 			var available = room.exits[obj].available(player);
@@ -170,7 +169,7 @@ function processCommand(command) {
 		// there wasn't a direction by that name
 		else {
 			// TODO give customized replies for actual directions
-			command.reply('You can\'t go "' + obj + '", it just doesn\'t work.');
+			command.reply(i18n.__('You can\'t go "%s", it just doesn\'t work.', obj));
 		}
 	}
 	// otherwise, try to run the command from our possible ones
@@ -178,21 +177,21 @@ function processCommand(command) {
 		command.reply(room.commands[verb](player));
 	}
 	// if they asked for the exits, list them
-	else if (verb === 'exits') {
+	else if (verb === i18n.__('exits')) {
 		var exits = [];
 		for (var key in room.exits) {
 			exits.push(room.exits[key].name);
 		}
 
-		var exitNames = "Available exits: ";
+		var exitNames = i18n.__('Available exits: ');
 		for (var i = 0; i < exits.length; i++) {
 			exitNames += exits[i];
-			if (i !== exits.length - 1) exitNames += ", ";
+			if (i !== exits.length - 1) exitNames += i18n.__(", ");
 		}
 		command.reply(exitNames);
 	}
 	else {
-		command.reply('Sorry, I don\'t know how to "' + verb + '" in this room.');
+		command.reply(i18n.__('Sorry, I don\'t know how to "%s" in this room.', verb));
 	}
 }
 
@@ -310,17 +309,33 @@ function listenForCommand(interface) {
 	}
 }
 
+function cleanlyShutDown() {
+	console.info("\n\nShutting down…");
+	if (mongodb) mongodb.close();
+	process.exit(0);
+}
+
+console.info('Connecting to MongoDB database…');
 // now connect to mongo
 mongo.connect('mongodb://advtxt-test:ImpossibleYellowUmbrage52751@troup.mongohq.com:10082/advtxt-test', function(err, db) {
 	if (err) throw err;
 
-	mongodb = db;
+	if (db) {
+		console.info('Connected.');
+		mongodb = db;
 
-	var interface = readline.createInterface({
-		input: process.stdin,
-		output: process.stdout
-	});
-	interface.type = 'readline';
-	listenForCommand(interface);
+		var interface = readline.createInterface({
+			input: process.stdin,
+			output: process.stdout
+		});
+		interface.type = 'readline';
+		listenForCommand(interface);
+	}
+	else {
+		console.error('Connected, but failed to get a database…');
+		process.exit(1);
+	}
 });
+
+process.on('SIGINT', cleanlyShutDown);
 
