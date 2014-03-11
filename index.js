@@ -1,6 +1,40 @@
+/*
+The MIT License (MIT)
+
+Copyright (c) 2014 Nathan Wittstock
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in
+all copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+THE SOFTWARE.
+*/
+
+/** 
+ * TODO Items:
+ *
+ * [ ] Win Condition
+ * [ ] Death Condition
+ * [ ] Separation into require'd library
+ * [ ] Error checking and recovery
+ */
+
 var mongo = require('mongodb').MongoClient,
  readline = require('readline'),
   natural = require('natural'),
+	   i18n = new (require('i18n-2'))({ locales: ['en']}),
         _ = require('underscore');
 
 var tokenizer = new natural.WordTokenizer(),
@@ -20,17 +54,18 @@ var tokenizer = new natural.WordTokenizer(),
 function movePlayer(command, direction) {
 	var move = [];
 	// right now we only process cardinal directions
-	if (direction === 'north') 
+	if (direction === 'north' || direction === 'n') 
 		move = [0, -1];
-	else if (direction === 'south') 
+	else if (direction === 'south' || direction === 's') 
 		move = [0, 1];
-	else if (direction === 'east') 
+	else if (direction === 'east' || direction === 'e') 
 		move = [1, 0];
-	else if (direction === 'west')
+	else if (direction === 'west' || direction === 'w')
 		move = [-1, 0];
 	else
 		move = [0, 0];
 
+	// now we apply those moves to the player object
 	command.player.x += move[0];
 	command.player.y += move[1];
 
@@ -107,6 +142,14 @@ function processCommand(command) {
 				// update the player
 				updatePlayerItems(player);
 			}
+			// that item wasn't available
+			else {
+				command.reply(available);
+			}
+		}
+		// there wasn't an item by that name
+		else {
+			command.reply('You can\'t find a "' + obj + '" in this room!');
 		}
 	}
 	else if (verb === 'go') {
@@ -119,11 +162,12 @@ function processCommand(command) {
 				// move the player
 				movePlayer(command, obj);
 			}
+			// that direction wasn't available; give the reason
 			else {
-				// that direction wasn't available; give the reason
 				command.reply(available);
 			}
 		}
+		// there wasn't a direction by that name
 		else {
 			// TODO give customized replies for actual directions
 			command.reply('You can\'t go "' + obj + '", it just doesn\'t work.');
@@ -240,7 +284,9 @@ function processReadline(commandText) {
 		command: commandText,
 		player: globalPlayer,
 		reply: function(message) {
-			console.log(message + ' (' + message.length + ')');
+			var messageLength = message.length + 16;
+			if (messageLength > 140) messageLength = "!!!" + messageLength + "!!!";
+			console.log(message + ' (' + messageLength + ')');
 		}
 	};
 
