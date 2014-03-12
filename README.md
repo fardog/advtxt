@@ -3,10 +3,17 @@ AdvTxt
 
 A text adventure engine that uses MongoDB as its backing store.
 
+Installation
+------------
+
+```
+npm install advtxt
+```
+
 Usage
 -----
 
-AdvTxt is not published to `npm` yet, and won't be until it's more complete. To use AdvTxt, clone it locally and:
+When you set up AdvTxt, you just need to give it a MongoDB connection string.
 
 ```
 var yourMongoConnectionUrl = 'mongodb://localhost/advtxt';
