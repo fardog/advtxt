@@ -1,7 +1,7 @@
 AdvTxt
 ======
 
-A text adventure engine that uses MongoDB as its backing store.
+A text adventure engine.
 
 Installation
 ------------
@@ -13,11 +13,26 @@ npm install advtxt
 Usage
 -----
 
-When you set up AdvTxt, you just need to give it a MongoDB connection string.
+When you set up AdvTxt, you need to give it a backing store. What follows is an example using the [advtxt-db-mongo][advtxtmongo] module, and the [advtxt-readline](http://github.com/fardog/advtxt-readline) module for I/O.
 
 ```
-var yourMongoConnectionUrl = 'mongodb://localhost/advtxt';
-var advtxt = new (require('advtxt'))(yourMongoConnectionUrl);
+var config = {
+	adapter: 'mongodb',
+	mongodb: {
+		uri: 'mongodb://localhost/advtxt-test'
+	}
+};
+
+var advDbMongo = new (require('advtxt-db-mongo'))();
+var advtxt = new (require('advtxt'))();
+var advtxtreadline = require('advtxt-readline');
+
+advDbMongo.initialize(config, function(err, dbAdapter) {
+	if (err) throw err;
+
+	advtxt.initialize(dbAdapter);
+	var AdvTxt = new advtxtreadline(advtxt);
+});
 ```
 
 There's only one public function you should use, `advtxt.processCommand(command)` where `command` is in the following format:
@@ -33,6 +48,16 @@ var command = {
 ```
 
 AdvTxt doesn't do any authentication on it's own, that's for you to implement in your interface. All output is sent through the `reply` function you provide.
+
+
+History
+-------
+
+- **v0.0.3**
+    - Moves MongoDB interface to its own [lightweight adapter][advtxtmongo]
+
+
+[advtxtmongo]: http://github.com/fardog/advtxt-db-mongo
 
 
 The MIT License (MIT)
