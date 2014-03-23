@@ -1,10 +1,12 @@
 AdvTxt
 ======
 
-A text adventure engine.
+A Node.js text adventure engine.
 
 Installation
 ------------
+
+Currently this project is unstable and shouldn't be relied upon by anyone.
 
 ```
 npm install advtxt
@@ -53,6 +55,8 @@ AdvTxt doesn't do any authentication on it's own, that's for you to implement in
 History
 -------
 
+- **v0.0.4**
+    - Adds a new command parser with support for aliases.
 - **v0.0.3**
     - Moves MongoDB interface to its own [lightweight adapter][advtxtmongo]
 
