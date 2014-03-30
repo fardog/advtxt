@@ -8,7 +8,7 @@ Installation
 
 Currently this project is unstable and shouldn't be relied upon by anyone.
 
-```
+```sh
 npm install advtxt
 ```
 
@@ -17,7 +17,7 @@ Usage
 
 When you set up AdvTxt, you need to give it a backing store. What follows is an example using the [advtxt-db-mongo][advtxtmongo] module, and the [advtxt-readline](http://github.com/fardog/advtxt-readline) module for I/O.
 
-```
+```js
 var config = {
 	adapter: 'mongodb',
 	mongodb: {
@@ -39,12 +39,15 @@ advDbMongo.initialize(config, function(err, dbAdapter) {
 
 There's only one public function you should use, `advtxt.processCommand(command)` where `command` is in the following format:
 
-```
+```js
 var command = {
     command: "Your command text",
     player: "playerName",
-    reply: function(message) {
-        console.log(message);
+    replies: [],
+    done: function(command) {
+        command.replies.forEach (function(reply) {
+            console.log(reply);
+        });
     }
 };
 ```
@@ -55,6 +58,8 @@ AdvTxt doesn't do any authentication on it's own, that's for you to implement in
 History
 -------
 
+- **v0.0.5**
+    - Now pushes replies into an array of messages; any reply handling modules will need to be updated.
 - **v0.0.4**
     - Adds a new command parser with support for aliases.
 - **v0.0.3**
