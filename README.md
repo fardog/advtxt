@@ -58,6 +58,8 @@ AdvTxt doesn't do any authentication on it's own, that's for you to implement in
 History
 -------
 
+- **v0.0.6**
+    - AdvTxt now extends EventEmitter and emits 'reply' messages.
 - **v0.0.5**
     - Now pushes replies into an array of messages; any reply handling modules will need to be updated.
 - **v0.0.4**
