@@ -30,8 +30,6 @@ module.exports = function(grunt) {
     }
   });
 
-  grunt.loadTasks('tasks');
-
   grunt.loadNpmTasks('grunt-contrib-jshint');
   grunt.loadNpmTasks('grunt-contrib-nodeunit');
 
