@@ -2,11 +2,10 @@
 
 var grunt = require('grunt');
 var mockdb = require('./fixtures/mockdb.js');
-var advtxt = require('../');
+var advtxt = new (require('../'))();
 var Hoek = require('hoek');
 
 var advDbMock = new mockdb();
-var advtxt = new (require('advtxt'))();
 
 var blank_command = {
   command: "",
