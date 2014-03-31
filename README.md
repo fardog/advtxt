@@ -1,5 +1,4 @@
-AdvTxt
-======
+# AdvTxt [![Build Status](https://travis-ci.org/fardog/advtxt.png?branch=master)](https://travis-ci.org/fardog/advtxt)
 
 A Node.js text adventure engine.
 
@@ -52,7 +51,11 @@ var command = {
 };
 ```
 
-AdvTxt doesn't do any authentication on it's own, that's for you to implement in your interface. All output is sent through the `reply` function you provide.
+AdvTxt doesn't do any authentication on it's own, that's for you to implement in your interface.
+
+All output is pushed line-per-line into the `replies` array; the `done` function will be called once all processing is complete; it's up to you to implement interfaces!
+
+AdvTxt extends Node's EventEmitter, so you can bind to a 'reply' event to get replies as they come in.
 
 
 History
