@@ -1,31 +1,33 @@
 {
   "name": "advtxt",
-  "version": "0.0.6",
+  "version": "0.1.0",
   "private": false,
-	"main": "index",
-	"repository": {
-		"type": "git",
-		"url": "git://github.com/fardog/advtxt"
-	},
-	"licenses": [
-		{
-			"type": "MIT",
-			"url": "http://github.com/fardog/advtxt/raw/master/LICENSE"
-		}
-	],
+  "main": "index",
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/fardog/advtxt"
+  },
+  "licenses": [
+    {
+      "type": "MIT",
+      "url": "http://github.com/fardog/advtxt/raw/master/LICENSE"
+    }
+  ],
   "author": "Nathan Wittstock <code@fardogllc.com>",
   "description": "An engine for text-based adventure games.",
-	"keywords": [
-		"game",
-		"adventure"
-	],
-	"engines": {
-		"node": ">=0.10.22"
-	},
-	"scripts": {},
+  "keywords": [
+    "game",
+    "adventure"
+  ],
+  "engines": {
+    "node": ">=0.10.22"
+  },
+  "scripts": {},
   "dependencies": {
     "underscore": "^1.6.0",
     "natural": "^0.1.26",
-    "i18n-2": "^0.4.6"
+    "i18n-2": "^0.4.6",
+    "async": "^0.6.1",
+    "debug": "^0.8.0"
   }
 }
