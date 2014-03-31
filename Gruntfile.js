@@ -15,7 +15,8 @@ module.exports = function(grunt) {
   grunt.initConfig({
     jshint: {
       all: [
-        'Gruntfile.js',
+        '*.json',
+        '*.js',
         'lib/*.js',
         '<%= nodeunit.tests %>'
       ],
