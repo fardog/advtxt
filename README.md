@@ -58,6 +58,8 @@ AdvTxt doesn't do any authentication on it's own, that's for you to implement in
 History
 -------
 
+- **v0.1.1**
+    - Adds tests, jshint. Fixes linting issues.
 - **v0.1.0**
     - Moves application flow over to async library, more readable/testable.
 - **v0.0.6**

@@ -22,12 +22,23 @@
   "engines": {
     "node": ">=0.10.22"
   },
-  "scripts": {},
+  "scripts": {
+    "test": "grunt jshint test"
+  },
   "dependencies": {
     "underscore": "^1.6.0",
     "natural": "^0.1.26",
     "i18n-2": "^0.4.6",
     "async": "^0.6.1",
     "debug": "^0.8.0"
+  },
+  "devDependencies": {
+    "grunt-contrib-jshint": "~0.6.4",
+    "grunt-contrib-nodeunit": "~0.2.0",
+    "grunt": "~0.4.0",
+    "grunt-cli": "~0.1.13"
+  },
+  "peerDependencies": {
+    "grunt": "~0.4.0"
   }
 }
