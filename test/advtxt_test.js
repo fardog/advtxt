@@ -2,7 +2,7 @@
 
 var grunt = require('grunt');
 var mockdb = require('./fixtures/mockdb.js');
-var advtxt = require('advtxt');
+var advtxt = require('../');
 var Hoek = require('hoek');
 
 var advDbMock = new mockdb();
