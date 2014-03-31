@@ -30,7 +30,8 @@
     "natural": "^0.1.26",
     "i18n-2": "^0.4.6",
     "async": "^0.6.1",
-    "debug": "^0.8.0"
+    "debug": "^0.8.0",
+    "hoek": "^1.5.2"
   },
   "devDependencies": {
     "grunt-contrib-jshint": "~0.6.4",
