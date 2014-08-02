@@ -1,6 +1,6 @@
 # AdvTxt [![Build Status](https://travis-ci.org/fardog/advtxt.png?branch=master)](https://travis-ci.org/fardog/advtxt)
 
-A Node.js text adventure engine.
+A Node.js text adventure engine. You'll need [advtxt-editor](https://github.com/fardog/advtxt_editor) to make your rooms.
 
 Installation
 ------------
@@ -18,21 +18,26 @@ When you set up AdvTxt, you need to give it a backing store. What follows is an 
 
 ```js
 var config = {
-	adapter: 'mongodb',
-	mongodb: {
-		uri: 'mongodb://localhost/advtxt-test'
-	}
+  adapter: 'mongodb',
+  mongodb: {
+    uri: 'mongodb://localhost/advtxt_test'
+  }
 };
 
 var advDbMongo = new (require('advtxt-db-mongo'))();
 var advtxt = new (require('advtxt'))();
-var advtxtreadline = require('advtxt-readline');
 
 advDbMongo.initialize(config, function(err, dbAdapter) {
-	if (err) throw err;
+  if (err) {
+    throw err;
+  }
 
-	advtxt.initialize(dbAdapter);
-	var AdvTxt = new advtxtreadline(advtxt);
+  advtxt.initialize(dbAdapter);
+
+  var advtxtreadline = require('advtxt-readline');
+  var advtxttelnet = require('advtxt-telnet');
+
+  var AdvTxt = new advtxtreadline(advtxt);
 });
 ```
 
@@ -61,6 +66,8 @@ AdvTxt extends Node's EventEmitter, so you can bind to a 'reply' event to get re
 History
 -------
 
+- **v0.2.0**
+	- Updates to a much more flexible database format, but is very buggy. No tests yet.
 - **v0.1.1**
     - Adds tests, jshint. Fixes linting issues.
 - **v0.1.0**
